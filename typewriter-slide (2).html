@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Typewriter Slide</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f0f0f8;
+    font-family: 'Nunito', sans-serif;
+    overflow: hidden;
+  }
+
+  /* Soft gradient background blobs */
+  .bg {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    background: linear-gradient(135deg, #f5f0ff 0%, #fff5fb 40%, #eff4ff 100%);
+  }
+  .blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.55;
+  }
+  .blob-1 { width: 500px; height: 500px; background: #d8c8f8; top: -120px; right: -80px; }
+  .blob-2 { width: 400px; height: 400px; background: #f7c8e8; bottom: -100px; left: -80px; }
+  .blob-3 { width: 300px; height: 300px; background: #c8dcf8; top: 50%; left: 50%; transform: translate(-50%,-50%); }
+
+  /* Floating background icons */
+  .icons-layer {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+  }
+  .icon {
+    position: absolute;
+    opacity: 0.08;
+    color: #5548c8;
+    animation: float 8s ease-in-out infinite;
+  }
+  .icon svg { display: block; }
+  .icon:nth-child(1)  { top: 12%; left: 7%;  animation-delay: 0s;   animation-duration: 9s;  }
+  .icon:nth-child(2)  { top: 72%; left: 5%;  animation-delay: 1.5s; animation-duration: 7s;  }
+  .icon:nth-child(3)  { top: 20%; right: 8%; animation-delay: 0.8s; animation-duration: 11s; }
+  .icon:nth-child(4)  { top: 68%; right: 6%; animation-delay: 2.2s; animation-duration: 8s;  }
+  .icon:nth-child(5)  { top: 45%; left: 3%;  animation-delay: 3s;   animation-duration: 10s; }
+  .icon:nth-child(6)  { top: 85%; right: 12%;animation-delay: 1s;   animation-duration: 9s;  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    33%       { transform: translateY(-14px) rotate(4deg); }
+    66%       { transform: translateY(8px) rotate(-3deg); }
+  }
+
+  /* Main content */
+  .slide {
+    position: relative;
+    z-index: 10;
+    text-align: center;
+    padding: 60px 40px;
+    max-width: 900px;
+    width: 100%;
+  }
+
+  .subtitle-top {
+    font-family: 'Nunito', sans-serif;
+    font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+    font-weight: 400;
+    color: #3a3a4a;
+    letter-spacing: 0.01em;
+    margin-bottom: 18px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 0.3s;
+  }
+
+  .keyword-wrap {
+    min-height: clamp(80px, 12vw, 130px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 30px;
+  }
+
+  .keyword {
+    font-family: 'Nunito', sans-serif;
+    font-size: clamp(2.8rem, 7.5vw, 5.5rem);
+
+    color: #3d35b5;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    display: inline-block;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 0.6s;
+  }
+
+  .cursor {
+    display: inline-block;
+    width: clamp(3px, 0.5vw, 5px);
+    height: clamp(2.5rem, 6.5vw, 5rem);
+    background: #7b6ee0;
+    margin-left: 4px;
+    vertical-align: middle;
+    border-radius: 2px;
+    animation: blink 1s step-end infinite, fadeUp 0.8s ease forwards 0.6s;
+    opacity: 0;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0; }
+  }
+
+  .subtitle-bottom {
+    font-family: 'Nunito', sans-serif;
+    font-size: clamp(0.85rem, 1.8vw, 1.1rem);
+    font-weight: 400;
+    color: #555568;
+    line-height: 1.65;
+    max-width: 600px;
+    margin: 0 auto;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 0.9s;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Edit hint */
+  .hint {
+    position: fixed;
+    bottom: 18px;
+    right: 22px;
+    font-size: 0.7rem;
+    color: #bbb;
+    z-index: 20;
+    font-family: monospace;
+  }
+</style>
+</head>
+<body>
+
+<div class="bg">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+</div>
+
+<!-- Floating background icons -->
+<div class="icons-layer">
+  <!-- Brain / lightbulb icon -->
+  <div class="icon" style="width:60px">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="60" height="60">
+      <path d="M12 2a5 5 0 0 1 5 5c0 1.5-.6 2.8-1.6 3.8A4 4 0 0 1 16 14v1a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1v-1a4 4 0 0 1 .6-3.2A5 5 0 0 1 12 2z"/>
+      <line x1="9" y1="18" x2="15" y2="18"/><line x1="10" y1="21" x2="14" y2="21"/>
+    </svg>
+  </div>
+  <!-- Heart icon -->
+  <div class="icon" style="width:55px">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="55" height="55">
+      <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/>
+    </svg>
+  </div>
+  <!-- Infinity / loop icon -->
+  <div class="icon" style="width:65px">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="65" height="65">
+      <path d="M12 12c-2-2.5-4-4-6-4a4 4 0 0 0 0 8c2 0 4-1.5 6-4z"/>
+      <path d="M12 12c2 2.5 4 4 6 4a4 4 0 0 0 0-8c-2 0-4 1.5-6 4z"/>
+    </svg>
+  </div>
+  <!-- Eye / vision icon -->
+  <div class="icon" style="width:58px">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="58" height="58">
+      <path d="M1 12S5 4 12 4s11 8 11 8-4 8-11 8S1 12 1 12z"/>
+      <circle cx="12" cy="12" r="3"/>
+    </svg>
+  </div>
+  <!-- Zap / signal icon -->
+  <div class="icon" style="width:50px">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="50" height="50">
+      <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+    </svg>
+  </div>
+  <!-- DNA / helix icon -->
+  <div class="icon" style="width:52px">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="52" height="52">
+      <path d="M6 2c0 4 12 4 12 8S6 14 6 18s12 4 12 4"/>
+      <path d="M18 2c0 4-12 4-12 8s12 4 12 8-12 4-12 4"/>
+    </svg>
+  </div>
+</div>
+
+<div class="slide">
+  <p class="subtitle-top">Explore the fascinating field of</p>
+
+  <div class="keyword-wrap">
+    <span class="keyword" id="keyword"></span><span class="cursor" id="cursor"></span>
+  </div>
+
+  <p class="subtitle-bottom">
+    using our DIY Neuroscience Kits and create amazing Human-Computer<br>
+    Interfaces &amp; Brain-Computer Interfaces right at your home!
+  </p>
+</div>
+
+<div class="hint">Press F11 for fullscreen · Edit words in JS below</div>
+
+<script>
+  // ✏️ EDIT YOUR WORDS HERE
+  const words = [
+    "Neuroscience",
+    "Electrophysiology",
+    "Cognitive Science",
+    "Neural Coding",
+    "Brain Imaging",
+  ];
+
+  const TYPE_SPEED   = 80;   // ms per character typed
+  const DELETE_SPEED = 45;   // ms per character deleted
+  const PAUSE_AFTER  = 2000; // ms to hold before deleting
+  const PAUSE_BEFORE = 400;  // ms pause before typing next word
+
+  const el = document.getElementById('keyword');
+  let wordIndex = 0, charIndex = 0, deleting = false;
+
+  function tick() {
+    const current = words[wordIndex];
+
+    if (!deleting) {
+      el.textContent = current.slice(0, charIndex + 1);
+      charIndex++;
+      if (charIndex === current.length) {
+        deleting = true;
+        setTimeout(tick, PAUSE_AFTER);
+        return;
+      }
+      setTimeout(tick, TYPE_SPEED);
+    } else {
+      el.textContent = current.slice(0, charIndex - 1);
+      charIndex--;
+      if (charIndex === 0) {
+        deleting = false;
+        wordIndex = (wordIndex + 1) % words.length;
+        setTimeout(tick, PAUSE_BEFORE);
+        return;
+      }
+      setTimeout(tick, DELETE_SPEED);
+    }
+  }
+
+  // Start after entrance animation
+  setTimeout(tick, 900);
+</script>
+</body>
+</html>
