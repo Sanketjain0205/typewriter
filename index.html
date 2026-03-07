@@ -8,6 +8,11 @@
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+  @font-face {
+    font-family: 'Rekgiva';
+    src: url('https://raw.githubusercontent.com/Sanketjain0205/typewriter/main/RekgivaDemo-Regular.ttf') format('truetype');
+  }
+
   body {
     min-height: 100vh;
     display: flex;
@@ -92,9 +97,8 @@
   }
 
   .keyword {
-    font-family: 'Nunito', sans-serif;
+    font-family: 'Rekgiva', sans-serif;
     font-size: clamp(2.8rem, 7.5vw, 5.5rem);
-
     color: #3d35b5;
     letter-spacing: -0.02em;
     line-height: 1;
@@ -135,17 +139,6 @@
   @keyframes fadeUp {
     from { opacity: 0; transform: translateY(18px); }
     to   { opacity: 1; transform: translateY(0); }
-  }
-
-  /* Edit hint */
-  .hint {
-    position: fixed;
-    bottom: 18px;
-    right: 22px;
-    font-size: 0.7rem;
-    color: #bbb;
-    z-index: 20;
-    font-family: monospace;
   }
 </style>
 </head>
@@ -213,8 +206,6 @@
     Interfaces &amp; Brain-Computer Interfaces right at your home!
   </p>
 </div>
-
-<div class="hint">Press F11 for fullscreen · Edit words in JS below</div>
 
 <script>
   // ✏️ EDIT YOUR WORDS HERE
