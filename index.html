@@ -78,7 +78,7 @@
     z-index: 10;
     text-align: center;
     padding: 60px 40px;
-    max-width: 900px;
+    max-width: 100%;
     width: 100%;
   }
 
@@ -99,15 +99,19 @@
     align-items: center;
     justify-content: center;
     margin-bottom: 30px;
+    width: 100%;
+    padding: 0 40px;
   }
 
   .keyword {
     font-family: 'Rekgiva', sans-serif;
-    font-size: clamp(3.5rem, 9vw, 6.9rem);
+    font-size: 6.9rem;
     color: #3d35b5;
     letter-spacing: -0.02em;
     line-height: 1;
     display: inline-block;
+    white-space: nowrap;
+    max-width: 90vw;
     opacity: 0;
     animation: fadeUp 0.8s ease forwards 0.6s;
     -webkit-text-stroke: 2.2px #3d35b5;
@@ -121,6 +125,7 @@
     margin-left: 4px;
     vertical-align: middle;
     border-radius: 2px;
+    flex-shrink: 0;
     animation: blink 1s step-end infinite, fadeUp 0.8s ease forwards 0.6s;
     opacity: 0;
   }
@@ -158,40 +163,34 @@
 
 <!-- Floating background icons -->
 <div class="icons-layer">
-  <!-- Brain / lightbulb icon -->
   <div class="icon" style="width:60px">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="60" height="60">
       <path d="M12 2a5 5 0 0 1 5 5c0 1.5-.6 2.8-1.6 3.8A4 4 0 0 1 16 14v1a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1v-1a4 4 0 0 1 .6-3.2A5 5 0 0 1 12 2z"/>
       <line x1="9" y1="18" x2="15" y2="18"/><line x1="10" y1="21" x2="14" y2="21"/>
     </svg>
   </div>
-  <!-- Heart icon -->
   <div class="icon" style="width:55px">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="55" height="55">
       <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/>
     </svg>
   </div>
-  <!-- Infinity / loop icon -->
   <div class="icon" style="width:65px">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="65" height="65">
       <path d="M12 12c-2-2.5-4-4-6-4a4 4 0 0 0 0 8c2 0 4-1.5 6-4z"/>
       <path d="M12 12c2 2.5 4 4 6 4a4 4 0 0 0 0-8c-2 0-4 1.5-6 4z"/>
     </svg>
   </div>
-  <!-- Eye / vision icon -->
   <div class="icon" style="width:58px">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="58" height="58">
       <path d="M1 12S5 4 12 4s11 8 11 8-4 8-11 8S1 12 1 12z"/>
       <circle cx="12" cy="12" r="3"/>
     </svg>
   </div>
-  <!-- Zap / signal icon -->
   <div class="icon" style="width:50px">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="50" height="50">
       <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
     </svg>
   </div>
-  <!-- DNA / helix icon -->
   <div class="icon" style="width:52px">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="52" height="52">
       <path d="M6 2c0 4 12 4 12 8S6 14 6 18s12 4 12 4"/>
@@ -217,20 +216,37 @@
   // ✏️ EDIT YOUR WORDS HERE
   const words = [
     "Neuroscience",
-   "Biofeedback",
+    "Biofeedback",
     "Electrophysiology",
-   "Neurofeedback",
+    "Neurofeedback",
     "Cognitive Science",
     "Neural Coding",
     "Brain Imaging",
   ];
 
-  const TYPE_SPEED   = 90;   // ms per character typed
-  const DELETE_SPEED = 65;   // ms per character deleted
-  const PAUSE_AFTER  = 2000; // ms to hold before deleting
-  const PAUSE_BEFORE = 400;  // ms pause before typing next word
+  const TYPE_SPEED   = 90;
+  const DELETE_SPEED = 65;
+  const PAUSE_AFTER  = 2000;
+  const PAUSE_BEFORE = 400;
 
   const el = document.getElementById('keyword');
+  const MAX_SIZE = 110; // maximum font size in px
+  const MIN_SIZE = 20;  // minimum font size in px
+
+  // Auto-fit keyword to always stay on one line
+  function fitKeyword() {
+    const wrap = el.parentElement;
+    const available = wrap.clientWidth * 0.90;
+    let size = MAX_SIZE;
+    el.style.fontSize = size + 'px';
+    while (el.scrollWidth > available && size > MIN_SIZE) {
+      size -= 1;
+      el.style.fontSize = size + 'px';
+    }
+  }
+
+  window.addEventListener('resize', fitKeyword);
+
   let wordIndex = 0, charIndex = 0, deleting = false;
 
   function tick() {
@@ -238,6 +254,7 @@
 
     if (!deleting) {
       el.textContent = current.slice(0, charIndex + 1);
+      fitKeyword();
       charIndex++;
       if (charIndex === current.length) {
         deleting = true;
@@ -247,6 +264,7 @@
       setTimeout(tick, TYPE_SPEED);
     } else {
       el.textContent = current.slice(0, charIndex - 1);
+      fitKeyword();
       charIndex--;
       if (charIndex === 0) {
         deleting = false;
